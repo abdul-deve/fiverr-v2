@@ -38,7 +38,7 @@ class OTPService:
         return pyotp.TOTP(self.manager.secret_key, interval=OTP_Expiry).now()
 
     def reset(self,commit=True):
-        self.manager.secret_key = None
+        self.manager.secret_key = self.generate_key()
         self.manager.attempts = 0
         self.manager.last_attempt = None
         if commit:
@@ -46,10 +46,7 @@ class OTPService:
 
     def verify_otp(self, otp: str):
         m = self.manager
-
-        if not self.is_valid():
-            raise MaxOTPAttemptsExceededError("Too many attempts")
-
+        self.is_valid()
         totp = pyotp.TOTP(m.secret_key, interval=OTP_Expiry)
         if not totp.verify(otp):
             m.attempts += 1
@@ -61,13 +58,11 @@ class OTPService:
 
     def is_valid(self):
         from datetime import timedelta
-
         if (
                 self.manager.last_attempt and
                 self.manager.last_attempt + timedelta(seconds=OTP_Expiry) < timezone.now()
         ):
             raise OTPExpiredError("OTP is expired")
-
         if self.manager.attempts >= Max_OTP_Attempts:
             raise MaxOTPAttemptsExceededError("Too many attempts")
         return True
