@@ -14,40 +14,29 @@ from lib.email import send_otp_email
 
 User = get_user_model()
 
-class OTPViewSet(viewsets):
 
-    @action(methods=["post"],detail=False,url_name="send_otp",url_path= "send_otp")
-    def send_otp(self,request):
+class OTPViewSet(viewsets.ViewSet):
+    @action(methods=["post"], detail=False, url_name="send_otp", url_path="send_otp")
+    def send_otp(self, request):
         serializer = SendOTPSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data["email"]
         user = User.objects.filter(email=email).first()
         send_otp_email(user)
-        return Response({
-            "message" : "OTP will be send to your email if it exists "
-        })
+        return Response({"message": "OTP will be send to your email if it exists "})
 
-    @action(methods=["post"],detail=False,url_name="verify_opt",url_path="verify_otp")
-    def verify_otp(self,request):
+    @action(
+        methods=["post"], detail=False, url_name="verify_opt", url_path="verify_otp"
+    )
+    def verify_otp(self, request):
         serializer = VerifyOTPSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        email =  serializer.validated_data.get("email")
+        email = serializer.validated_data.get("email")
         otp = serializer.validated_data.get("otp")
-        user = User.obejct.filter(email=email).first()
+        user = User.objects.filter(email=email).first()
         otp_service = OTPService(user)
         try:
             otp_service.verify_otp(otp)
-            return Response({
-                "message":"OTP verified successfully"
-            })
+            return Response({"message": "OTP verified successfully"})
         except Exception as e:
-            return Response ({
-                "message " : str(e),
-                status : status.HTTP_400_BAD_REQUEST
-            })
-
-
-
-
-
-
+            return Response({"message ": str(e), status: status.HTTP_400_BAD_REQUEST})

@@ -15,16 +15,31 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='OTPManager',
+            name="OTPManager",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('secret_key', models.CharField(blank=True, max_length=32, null=True)),
-                ('attempts', models.IntegerField(default=0)),
-                ('last_attempt', models.DateTimeField(blank=True, null=True)),
-                ('issued_at', models.DateTimeField(blank=True, null=True)),
-                ('resend_attempts', models.IntegerField(default=0)),
-                ('blocked_until', models.DateTimeField(blank=True, null=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='otp', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("secret_key", models.CharField(blank=True, max_length=32, null=True)),
+                ("attempts", models.IntegerField(default=0)),
+                ("last_attempt", models.DateTimeField(blank=True, null=True)),
+                ("issued_at", models.DateTimeField(blank=True, null=True)),
+                ("resend_attempts", models.IntegerField(default=0)),
+                ("blocked_until", models.DateTimeField(blank=True, null=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="otp",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]
